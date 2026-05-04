@@ -8,6 +8,7 @@ import { ConceptRefinement } from "@/components/prd/ConceptRefinement"
 import { ArchitectureStep } from "@/components/prd/ArchitectureStep"
 import { DocumentStep } from "@/components/prd/DocumentStep"
 import { LoadingScreen } from "@/components/prd/LoadingScreen"
+import { callOpenRouter, callOpenRouterJSON } from "@/lib/openrouter-client"
 import type {
   ApiKeyConfig,
   ArchCategory,
@@ -69,14 +70,38 @@ export default function Page() {
     setStep("concept-loading")
     setError(null)
     try {
-      const res = await fetch("/api/analyze-concept", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ concept: text, ...config }),
+      const SYSTEM = `Kamu adalah analis produk senior. Diberikan deskripsi konsep produk dari pengguna (dalam Bahasa Indonesia), hasilkan analisis terstruktur.
+
+Selalu kembalikan JSON valid persis dengan skema berikut (tanpa markdown, tanpa code fence):
+{
+  "elevatorPitch": "string - 3-5 kalimat ringkas tentang apa, untuk siapa, dan keunggulannya",
+  "targetUser": "string - 2-3 kalimat tentang segmen pengguna utama",
+  "keyProblems": ["string", "string", "string"],
+  "useCases": ["string", "string", "string", "string"]
+}
+
+Tulis dalam Bahasa Indonesia yang natural dan profesional.`
+
+      const userPrompt = `Konsep produk:\n"""\n${text}\n"""\n\nHasilkan analisis JSON.`
+
+      const result = await callOpenRouterJSON<ConceptResult>({
+        apiKey: config.apiKey,
+        model: config.model,
+        messages: [
+          { role: "system", content: SYSTEM },
+          { role: "user", content: userPrompt },
+        ],
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || "Gagal menganalisis konsep")
-      setConceptResult(data)
+
+      // Defensive normalization
+      const normalized: ConceptResult = {
+        elevatorPitch: String(result.elevatorPitch ?? ""),
+        targetUser: String(result.targetUser ?? ""),
+        keyProblems: Array.isArray(result.keyProblems) ? result.keyProblems.map(String) : [],
+        useCases: Array.isArray(result.useCases) ? result.useCases.map(String) : [],
+      }
+
+      setConceptResult(normalized)
       setStep("concept-result")
     } catch (e) {
       setError(e instanceof Error ? e.message : "Error")
@@ -89,19 +114,38 @@ export default function Page() {
     setRevising(true)
     setError(null)
     try {
-      const res = await fetch("/api/analyze-concept", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          concept,
-          feedback,
-          previous: conceptResult,
-          ...config,
-        }),
+      const SYSTEM = `Kamu adalah analis produk senior. Diberikan deskripsi konsep produk dari pengguna (dalam Bahasa Indonesia), hasilkan analisis terstruktur.
+
+Selalu kembalikan JSON valid persis dengan skema berikut (tanpa markdown, tanpa code fence):
+{
+  "elevatorPitch": "string - 3-5 kalimat ringkas tentang apa, untuk siapa, dan keunggulannya",
+  "targetUser": "string - 2-3 kalimat tentang segmen pengguna utama",
+  "keyProblems": ["string", "string", "string"],
+  "useCases": ["string", "string", "string", "string"]
+}
+
+Tulis dalam Bahasa Indonesia yang natural dan profesional.`
+
+      const userPrompt = `Konsep produk awal:\n"""\n${concept}\n"""\n\nAnalisis sebelumnya:\n${JSON.stringify(conceptResult)}\n\nFeedback dari pengguna untuk merevisi:\n"""\n${feedback}\n"""\n\nPerbarui dan keluarkan JSON terbaru sesuai skema.`
+
+      const result = await callOpenRouterJSON<ConceptResult>({
+        apiKey: config.apiKey,
+        model: config.model,
+        messages: [
+          { role: "system", content: SYSTEM },
+          { role: "user", content: userPrompt },
+        ],
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || "Gagal merevisi konsep")
-      setConceptResult(data)
+
+      // Defensive normalization
+      const normalized: ConceptResult = {
+        elevatorPitch: String(result.elevatorPitch ?? ""),
+        targetUser: String(result.targetUser ?? ""),
+        keyProblems: Array.isArray(result.keyProblems) ? result.keyProblems.map(String) : [],
+        useCases: Array.isArray(result.useCases) ? result.useCases.map(String) : [],
+      }
+
+      setConceptResult(normalized)
     } catch (e) {
       setError(e instanceof Error ? e.message : "Error")
     } finally {
@@ -114,14 +158,55 @@ export default function Page() {
     setStep("arch-loading")
     setError(null)
     try {
-      const res = await fetch("/api/generate-architecture", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ concept, conceptResult, ...config }),
+      const SYSTEM = `Kamu adalah arsitek solusi senior. Diberikan konsep produk dan analisisnya, hasilkan rekomendasi tech stack untuk 4 kategori: frontend, backend, database, dan deployment.
+
+Untuk setiap kategori, berikan TEPAT 4 opsi dengan tier berbeda:
+- "hemat" = paling hemat biaya / cepat dipasang
+- "standard" = pilihan yang seimbang
+- "populer" = paling banyak diadopsi komunitas
+- "pro" = enterprise-grade / paling skalabel
+
+Selalu kembalikan JSON valid persis dengan skema berikut (tanpa markdown, tanpa code fence):
+{
+  "frontend":   [{ "tier": "hemat", "name": "...", "description": "..." }, { "tier": "standard", ...}, { "tier": "populer", ...}, { "tier": "pro", ...}],
+  "backend":    [4 opsi dengan tier sama],
+  "database":   [4 opsi dengan tier sama],
+  "deployment": [4 opsi dengan tier sama]
+}
+
+Setiap "description" 2-3 kalimat dalam Bahasa Indonesia yang menjelaskan kelebihan dan use-case kontekstual untuk produk ini. Sertakan alasan spesifik kenapa cocok untuk konsep produk yang diberikan.`
+
+      const userPrompt = `Konsep produk:\n"""\n${concept}\n"""\n\nAnalisis konsep:\n${JSON.stringify(conceptResult, null, 2)}\n\nHasilkan rekomendasi arsitektur JSON sesuai skema.`
+
+      const result = await callOpenRouterJSON<ArchitectureResult>({
+        apiKey: config.apiKey,
+        model: config.model,
+        messages: [
+          { role: "system", content: SYSTEM },
+          { role: "user", content: userPrompt },
+        ],
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || "Gagal membuat arsitektur")
-      setArch(data)
+
+      const cats: (keyof ArchitectureResult)[] = ["frontend", "backend", "database", "deployment"]
+      const validTiers = new Set(["hemat", "standard", "populer", "pro"])
+      const normalized: ArchitectureResult = {
+        frontend: [],
+        backend: [],
+        database: [],
+        deployment: [],
+      }
+      for (const c of cats) {
+        const arr = Array.isArray(result[c]) ? result[c] : []
+        normalized[c] = arr
+          .filter((o) => o && validTiers.has(o.tier))
+          .map((o) => ({
+            tier: o.tier,
+            name: String(o.name ?? ""),
+            description: String(o.description ?? ""),
+          }))
+      }
+
+      setArch(normalized)
       setStep("arch-result")
     } catch (e) {
       setError(e instanceof Error ? e.message : "Error")
@@ -148,32 +233,90 @@ export default function Page() {
     const ac = new AbortController()
     abortRef.current = ac
 
+    const SYSTEM = `Kamu adalah Product Manager senior yang menulis Product Requirements Document (PRD) profesional.
+
+Tulis PRD lengkap dalam format Markdown GitHub-flavored (gunakan heading, bullet, tabel, code block bila perlu) dengan struktur berikut:
+
+# PRD: [Nama Produk]
+
+## 1. Ringkasan (Overview)
+## 2. Tujuan & Sasaran
+## 3. Target Pengguna & Persona
+## 4. Masalah yang Dipecahkan
+## 5. Use Cases / User Stories
+## 6. Fitur Utama (MVP)
+   - Tabel: Fitur | Prioritas | Deskripsi
+## 7. Fitur Lanjutan (Post-MVP)
+## 8. Arsitektur Teknis
+   - Sub-bagian: Frontend, Backend, Database, Deployment & Infrastruktur
+   - Sertakan tech yang dipilih pengguna + alasan
+## 9. Skema Data (high-level)
+## 10. API & Integrasi Eksternal
+## 11. Metrik Sukses (KPI)
+## 12. Risiko & Mitigasi
+## 13. Roadmap & Milestones (3-6 bulan pertama)
+## 14. Asumsi & Out-of-Scope
+
+Tulis dalam Bahasa Indonesia yang profesional dan detail. Jangan tambahkan kata pengantar atau kalimat di luar dokumen — keluarkan langsung markdown PRD.`
+
+    const userPrompt = `Konsep produk:\n"""\n${concept}\n"""\n\nAnalisis konsep:\n${JSON.stringify(conceptResult, null, 2)}\n\nTech stack yang dipilih pengguna:\n${JSON.stringify(selected, null, 2)}\n\nTuliskan PRD markdown lengkap.`
+
     try {
-      const res = await fetch("/api/generate-prd", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          concept,
-          conceptResult,
-          architecture: selected,
-          ...config,
-        }),
-        signal: ac.signal,
+      const res = await callOpenRouter({
+        apiKey: config.apiKey,
+        model: config.model,
+        messages: [
+          { role: "system", content: SYSTEM },
+          { role: "user", content: userPrompt },
+        ],
+        stream: true,
       })
+
       if (!res.ok || !res.body) {
         const txt = await res.text().catch(() => "")
         throw new Error(txt || "Gagal generate PRD")
       }
       setStep("doc-result")
       setStreaming(true)
+
+      // Transform SSE stream to plain text
       const reader = res.body.getReader()
       const decoder = new TextDecoder()
+      const encoder = new TextEncoder()
       let acc = ""
-      while (true) {
-        const { value, done } = await reader.read()
-        if (done) break
-        acc += decoder.decode(value, { stream: true })
-        setMarkdown(acc)
+      let buffer = ""
+
+      try {
+        while (true) {
+          const { value, done } = await reader.read()
+          if (done) break
+          buffer += decoder.decode(value, { stream: true })
+
+          const lines = buffer.split("\n")
+          buffer = lines.pop() ?? ""
+
+          for (const line of lines) {
+            const trimmed = line.trim()
+            if (!trimmed.startsWith("data:")) continue
+            const data = trimmed.slice(5).trim()
+            if (data === "[DONE]") {
+              setStreaming(false)
+              return
+            }
+            try {
+              const parsed = JSON.parse(data)
+              const delta: string | undefined = parsed?.choices?.[0]?.delta?.content
+              if (delta) {
+                acc += delta
+                setMarkdown(acc)
+              }
+            } catch {
+              // ignore non-JSON keepalives
+            }
+          }
+        }
+      } catch (err) {
+        // Abort or other error during reading
       }
       setStreaming(false)
     } catch (e) {

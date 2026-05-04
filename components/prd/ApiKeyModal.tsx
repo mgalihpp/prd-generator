@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { Eye, EyeOff, X, ExternalLink, KeyRound, ShieldCheck, Loader2 } from "lucide-react"
 import { DEFAULT_MODELS, type OpenRouterModel } from "@/lib/types"
+import { fetchOpenRouterModels } from "@/lib/openrouter-client"
 import { ModelSelector } from "./ModelSelector"
 
 const STORAGE_KEY = "prd-engine-config"
@@ -57,12 +58,7 @@ export function ApiKeyModal({
     setModelsLoading(true)
     setModelsError(null)
 
-    fetch("/api/openrouter-models")
-      .then(async (res) => {
-        const data = await res.json()
-        if (!res.ok) throw new Error(data.error || "Gagal mengambil model OpenRouter")
-        return data.models as OpenRouterModel[]
-      })
+    fetchOpenRouterModels()
       .then((nextModels) => {
         if (cancelled) return
         setModels(nextModels)

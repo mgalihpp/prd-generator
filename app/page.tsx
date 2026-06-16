@@ -203,7 +203,7 @@ export default function Page() {
   const completed: Record<StepKey, boolean> = {
     concept: ["arch-loading", "arch-result", "doc-loading", "doc-result"].includes(step),
     architecture: ["doc-loading", "doc-result"].includes(step),
-    document: false,
+    document: step === "doc-result" && !streaming && !!markdown,
   }
 
   return (

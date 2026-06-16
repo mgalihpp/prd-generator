@@ -45,16 +45,16 @@ export function DocumentStep({
         <div className="flex gap-2">
           <button
             onClick={handleDownload}
-            disabled={!markdown}
-            className="px-4 py-2.5 rounded-md border border-[#2a2a2a] hover:bg-[#1a1a1a] text-sm font-medium transition-colors flex items-center gap-2 disabled:opacity-50"
+            disabled={!markdown || isStreaming}
+            className="px-4 py-2.5 rounded-md border border-[#2a2a2a] hover:bg-[#1a1a1a] text-sm font-medium transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Download className="w-4 h-4" />
             <span className="hidden sm:inline">Unduh .md</span>
           </button>
           <button
             onClick={handleCopy}
-            disabled={!markdown}
-            className="btn-pink rounded-md px-5 py-2.5 font-semibold flex items-center gap-2 disabled:opacity-50"
+            disabled={!markdown || isStreaming}
+            className="btn-pink rounded-md px-5 py-2.5 font-semibold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
             {copied ? "Tersalin!" : "Salin Markdown"}

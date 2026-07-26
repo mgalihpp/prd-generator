@@ -16,9 +16,9 @@ Tulis PRD lengkap dalam format Markdown GitHub-flavored (gunakan heading, bullet
 ## 3. Target Pengguna & Persona
 ## 4. Masalah yang Dipecahkan
 ## 5. Use Cases / User Stories
-   - Sertakan **Use Case Diagram** dalam PlantUML (aktor, use case, relasi include/extend bila relevan).
+   - Sertakan **Use Case Diagram** dalam PlantUML. Gunakan \`left to right direction\`, definisikan \`actor\` dan \`usecase\`/\`(...)\`, hubungkan dengan \`-->\`. Untuk relasi gunakan \`.> : include\` dan \`.> : extends\`; generalisasi aktor pakai \`<|--\`.
 ## 6. Alur Pengguna (User Flow)
-   - Sertakan **Activity Diagram** dalam PlantUML untuk alur utama produk (mis. onboarding atau transaksi inti).
+   - Sertakan **Activity Diagram** dalam PlantUML (sintaks beta) untuk alur utama produk (mis. onboarding atau transaksi inti). Gunakan \`start\`/\`stop\`, aksi \`:teks;\`, percabangan \`if (...) then (...) / else (...) / endif\`, perulangan \`repeat\`/\`while\`, dan \`fork\`/\`fork again\`/\`end fork\` untuk proses paralel bila relevan.
 ## 7. Kebutuhan Fungsional & Fitur Utama (MVP)
    - Tabel: Fitur | Prioritas (MoSCoW) | Deskripsi
    - Kolom Prioritas WAJIB memakai framework **MoSCoW**: Must have / Should have / Could have / Won't have (this time).
@@ -31,7 +31,7 @@ Tulis PRD lengkap dalam format Markdown GitHub-flavored (gunakan heading, bullet
    - Sub-bagian: Frontend, Backend, Database, Deployment & Infrastruktur
    - Sertakan tech yang dipilih pengguna + alasan
 ## 12. Skema Data (high-level)
-   - Sertakan **Entity Relationship Diagram (ERD)** dalam PlantUML (gunakan notasi \`entity\` dengan atribut & relasi/kardinalitas).
+   - Sertakan **Entity Relationship Diagram (ERD)** dalam PlantUML. Gunakan blok \`entity "Nama" { ... }\` untuk atribut, dan nyatakan relasi/kardinalitas dengan tanda kutip PlantUML, mis. \`Pengguna "1" --o "many" Pesanan : memiliki\`.
 ## 13. API & Integrasi Eksternal
 ## 14. Metrik Sukses (KPI)
 ## 15. Risiko & Mitigasi
@@ -39,9 +39,11 @@ Tulis PRD lengkap dalam format Markdown GitHub-flavored (gunakan heading, bullet
 ## 17. Asumsi & Out-of-Scope
 
 ATURAN DIAGRAM (WAJIB DIIKUTI):
-- Semua diagram ditulis sebagai code block dengan bahasa \`plantuml\` (bukan mermaid), diawali \`@startuml\` dan diakhiri \`@enduml\`.
+- Semua diagram ditulis sebagai code block dengan bahasa \`plantuml\` (bukan mermaid), satu \`@startuml\` dan satu \`@enduml\` per blok.
 - Gunakan sintaks PlantUML yang valid dan sederhana agar pasti ter-render. Jangan pakai tema/skin kompleks atau \`!include\`.
-- Use Case: pakai \`actor\`, \`usecase\`, dan panah relasi. Activity: pakai \`start\`, \`:aksi;\`, \`if/else\`, \`stop\`. ERD: pakai blok \`entity "Nama" { ... }\` dan relasi seperti \`Entitas1 ||--o{ Entitas2\`.
+- Use Case: pakai \`actor\`, \`usecase\`/\`(...)\`, panah \`-->\`, relasi \`.> : include\` dan \`.> : extends\`, generalisasi \`<|--\`.
+- Activity (beta): pakai \`start\`, \`:aksi;\`, \`if (...) then (...)\`/\`else\`/\`endif\`, \`repeat\`/\`while\`, \`stop\`.
+- ERD: pakai blok \`entity "Nama" { ... }\` dan relasi berkardinalitas dengan tanda kutip, mis. \`A "1" --o "many" B\`. JANGAN gunakan notasi ala Mermaid seperti \`||--o{\`.
 
 Tulis dalam Bahasa Indonesia yang profesional dan detail. Jangan tambahkan kata pengantar atau kalimat di luar dokumen — keluarkan langsung markdown PRD.`
 

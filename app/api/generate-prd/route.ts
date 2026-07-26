@@ -3,37 +3,56 @@ import { callOpenRouter } from "@/lib/openrouter"
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
-const SYSTEM = `Kamu adalah Product Manager senior yang menulis Product Requirements Document (PRD) profesional.
+const SYSTEM = `Kamu adalah Product Manager senior yang menulis Product Requirements Document (PRD) profesional sesuai standar industri (mengacu pada praktik IEEE/ISO 29148).
 
-Tulis PRD lengkap dalam format Markdown GitHub-flavored (gunakan heading, bullet, tabel, code block bila perlu) dengan struktur berikut:
+Tulis PRD lengkap dalam format Markdown GitHub-flavored (gunakan heading, bullet, tabel, dan diagram bila perlu) dengan struktur berikut:
 
 # PRD: [Nama Produk]
+
+> **Versi:** 1.0 · **Status:** Draft · **Tanggal:** [isi tanggal hari ini] · **Penulis:** PRD Engine Pro
 
 ## 1. Ringkasan (Overview)
 ## 2. Tujuan & Sasaran
 ## 3. Target Pengguna & Persona
 ## 4. Masalah yang Dipecahkan
 ## 5. Use Cases / User Stories
-## 6. Fitur Utama (MVP)
-   - Tabel: Fitur | Prioritas | Deskripsi
-## 7. Fitur Lanjutan (Post-MVP)
-## 8. Arsitektur Teknis
+   - Sertakan **Use Case Diagram** dalam PlantUML (aktor, use case, relasi include/extend bila relevan).
+## 6. Alur Pengguna (User Flow)
+   - Sertakan **Activity Diagram** dalam PlantUML untuk alur utama produk (mis. onboarding atau transaksi inti).
+## 7. Kebutuhan Fungsional & Fitur Utama (MVP)
+   - Tabel: Fitur | Prioritas (MoSCoW) | Deskripsi
+   - Kolom Prioritas WAJIB memakai framework **MoSCoW**: Must have / Should have / Could have / Won't have (this time).
+## 8. Kriteria Penerimaan (Acceptance Criteria)
+   - Untuk tiap fitur "Must have", tuliskan kriteria dalam format **Given-When-Then** (Diberikan / Ketika / Maka).
+## 9. Kebutuhan Non-Fungsional (NFR)
+   - Bahas minimal: Performa, Keamanan, Skalabilitas, Ketersediaan (availability/SLA), Usability/Accessibility, dan Maintainability. Buat terukur bila memungkinkan (mis. "respons < 300ms", "uptime 99.9%").
+## 10. Fitur Lanjutan (Post-MVP)
+## 11. Arsitektur Teknis
    - Sub-bagian: Frontend, Backend, Database, Deployment & Infrastruktur
    - Sertakan tech yang dipilih pengguna + alasan
-## 9. Skema Data (high-level)
-## 10. API & Integrasi Eksternal
-## 11. Metrik Sukses (KPI)
-## 12. Risiko & Mitigasi
-## 13. Roadmap & Milestones (3-6 bulan pertama)
-## 14. Asumsi & Out-of-Scope
+## 12. Skema Data (high-level)
+   - Sertakan **Entity Relationship Diagram (ERD)** dalam PlantUML (gunakan notasi \`entity\` dengan atribut & relasi/kardinalitas).
+## 13. API & Integrasi Eksternal
+## 14. Metrik Sukses (KPI)
+## 15. Risiko & Mitigasi
+## 16. Roadmap & Milestones (3-6 bulan pertama)
+## 17. Asumsi & Out-of-Scope
+
+ATURAN DIAGRAM (WAJIB DIIKUTI):
+- Semua diagram ditulis sebagai code block dengan bahasa \`plantuml\` (bukan mermaid), diawali \`@startuml\` dan diakhiri \`@enduml\`.
+- Gunakan sintaks PlantUML yang valid dan sederhana agar pasti ter-render. Jangan pakai tema/skin kompleks atau \`!include\`.
+- Use Case: pakai \`actor\`, \`usecase\`, dan panah relasi. Activity: pakai \`start\`, \`:aksi;\`, \`if/else\`, \`stop\`. ERD: pakai blok \`entity "Nama" { ... }\` dan relasi seperti \`Entitas1 ||--o{ Entitas2\`.
 
 Tulis dalam Bahasa Indonesia yang profesional dan detail. Jangan tambahkan kata pengantar atau kalimat di luar dokumen — keluarkan langsung markdown PRD.`
 
 export async function POST(req: Request) {
   try {
-    const { concept, conceptResult, architecture, apiKey, model } = await req.json()
+    const { concept, conceptResult, architecture, apiKey, model } =
+      await req.json()
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: "API key required" }), { status: 400 })
+      return new Response(JSON.stringify({ error: "API key required" }), {
+        status: 400,
+      })
     }
 
     const userPrompt = `Konsep produk:\n"""\n${concept}\n"""\n\nAnalisis konsep:\n${JSON.stringify(conceptResult, null, 2)}\n\nTech stack yang dipilih pengguna:\n${JSON.stringify(architecture, null, 2)}\n\nTuliskan PRD markdown lengkap.`
@@ -49,7 +68,9 @@ export async function POST(req: Request) {
     })
 
     if (!upstream.body) {
-      return new Response(JSON.stringify({ error: "No upstream body" }), { status: 502 })
+      return new Response(JSON.stringify({ error: "No upstream body" }), {
+        status: 502,
+      })
     }
 
     // Transform OpenRouter SSE to plain text stream of markdown deltas
@@ -79,7 +100,8 @@ export async function POST(req: Request) {
               }
               try {
                 const parsed = JSON.parse(data)
-                const delta: string | undefined = parsed?.choices?.[0]?.delta?.content
+                const delta: string | undefined =
+                  parsed?.choices?.[0]?.delta?.content
                 if (delta) {
                   controller.enqueue(encoder.encode(delta))
                 }

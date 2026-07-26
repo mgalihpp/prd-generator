@@ -2,9 +2,9 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 
 import "./globals.css"
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-sans' })
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" })
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
@@ -13,7 +13,8 @@ const fontMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "PRD Engine Pro",
-  description: "AI untuk pembuat produk. Generate PRD lengkap dengan rencana arsitektur cerdas.",
+  description:
+    "AI untuk pembuat produk. Generate PRD lengkap dengan rencana arsitektur cerdas.",
 }
 
 export default function RootLayout({
@@ -25,7 +26,12 @@ export default function RootLayout({
     <html
       lang="id"
       suppressHydrationWarning
-      className={cn("antialiased dark", fontMono.variable, "font-sans", geist.variable)}
+      className={cn(
+        "dark antialiased",
+        fontMono.variable,
+        "font-sans",
+        geist.variable
+      )}
     >
       <body className="bg-[#0a0a0a] text-white">{children}</body>
     </html>

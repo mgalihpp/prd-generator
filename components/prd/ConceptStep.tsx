@@ -15,47 +15,50 @@ export function ConceptStep({
   const canSubmit = concept.trim().length >= 10
 
   return (
-    <div className="flex-1 flex items-center grid-bg">
-      <div className="max-w-5xl mx-auto px-6 py-16 w-full">
-        <h1 className="text-5xl sm:text-6xl font-extrabold leading-[1.05] tracking-tight">
+    <div className="grid-bg flex flex-1 items-center">
+      <div className="mx-auto w-full max-w-5xl px-6 py-16">
+        <h1 className="text-5xl leading-[1.05] font-extrabold tracking-tight sm:text-6xl">
           AI untuk
           <br />
           <span className="text-pink">pembuat produk.</span>
         </h1>
-        <p className="mt-6 text-base sm:text-lg text-[#a0a0a0] max-w-2xl leading-relaxed">
-          Susun Product Requirements Document (PRD) lengkap dengan rencana arsitektur cerdas.
-          Ceritakan konsep kamu, dan kami akan menghasilkan blueprint-nya.
+        <p className="mt-6 max-w-2xl text-base leading-relaxed text-[#a0a0a0] sm:text-lg">
+          Susun Product Requirements Document (PRD) lengkap dengan rencana
+          arsitektur cerdas. Ceritakan konsep kamu, dan kami akan menghasilkan
+          blueprint-nya.
         </p>
 
-        <div className="mt-10 card-dark p-5 sm:p-6">
-          <label className="text-xs font-semibold text-pink tracking-[0.15em] mb-3 block">
+        <div className="card-dark mt-10 p-5 sm:p-6">
+          <label className="text-pink mb-3 block text-xs font-semibold tracking-[0.15em]">
             KONSEP PRODUK
           </label>
-          <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-end">
+          <div className="flex flex-col items-stretch gap-4 sm:flex-row sm:items-end">
             <textarea
               value={concept}
               onChange={(e) => setConcept(e.target.value)}
               rows={3}
               placeholder="Deskripsikan ide aplikasi kamu di sini (contoh: marketplace untuk koki lokal...)"
-              className="flex-1 bg-transparent border-0 outline-none resize-none text-base text-white placeholder:text-[#5a5a5a] py-2"
+              className="flex-1 resize-none border-0 bg-transparent py-2 text-base text-white outline-none placeholder:text-[#5a5a5a]"
             />
             <button
               onClick={() => canSubmit && onAnalyze(concept.trim())}
               disabled={!canSubmit}
-              className="btn-pink rounded-lg px-6 py-3.5 font-semibold flex items-center justify-center gap-2 shrink-0"
+              className="btn-pink flex shrink-0 items-center justify-center gap-2 rounded-lg px-6 py-3.5 font-semibold"
             >
-              Analisis <ArrowRight className="w-4 h-4" />
+              Analisis <ArrowRight className="h-4 w-4" />
             </button>
           </div>
         </div>
 
         <div className="mt-6 flex flex-wrap gap-x-7 gap-y-2 text-sm text-[#a0a0a0]">
-          {["Analisis Berbasis AI", "Usulan Tech Stack", "Siap Ekspor"].map((f) => (
-            <div key={f} className="flex items-center gap-1.5">
-              <Check className="w-4 h-4 text-pink" strokeWidth={3} />
-              <span>{f}</span>
-            </div>
-          ))}
+          {["Analisis Berbasis AI", "Usulan Tech Stack", "Siap Ekspor"].map(
+            (f) => (
+              <div key={f} className="flex items-center gap-1.5">
+                <Check className="text-pink h-4 w-4" strokeWidth={3} />
+                <span>{f}</span>
+              </div>
+            )
+          )}
         </div>
       </div>
     </div>

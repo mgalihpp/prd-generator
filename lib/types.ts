@@ -1,4 +1,11 @@
-export type Step = "concept-input" | "concept-loading" | "concept-result" | "arch-loading" | "arch-result" | "doc-loading" | "doc-result"
+export type Step =
+  | "concept-input"
+  | "concept-loading"
+  | "concept-result"
+  | "arch-loading"
+  | "arch-result"
+  | "doc-loading"
+  | "doc-result"
 
 export type ConceptResult = {
   elevatorPitch: string

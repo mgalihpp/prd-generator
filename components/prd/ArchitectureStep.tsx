@@ -54,25 +54,26 @@ export function ArchitectureStep({
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-10 grid-bg flex-1">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+    <div className="grid-bg mx-auto max-w-7xl flex-1 px-6 py-10">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="flex items-center gap-2.5 mb-2">
-            <span className="w-2 h-2 rounded-full bg-[#ff1f5a] animate-pulse" />
-            <h2 className="text-sm font-semibold text-pink tracking-[0.15em]">
+          <div className="mb-2 flex items-center gap-2.5">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-[#ff1f5a]" />
+            <h2 className="text-pink text-sm font-semibold tracking-[0.15em]">
               PILIH TECH STACK
             </h2>
           </div>
           <p className="text-sm text-[#a0a0a0]">
-            Pilih satu opsi per kategori. Pilihanmu akan disertakan dalam dokumen PRD.
+            Pilih satu opsi per kategori. Pilihanmu akan disertakan dalam
+            dokumen PRD.
           </p>
         </div>
         <button
           onClick={onProceed}
           disabled={!allSelected}
-          className="btn-pink rounded-lg px-6 py-3.5 font-semibold flex items-center justify-center gap-2 sm:w-auto"
+          className="btn-pink flex items-center justify-center gap-2 rounded-lg px-6 py-3.5 font-semibold sm:w-auto"
         >
-          Lanjut ke Dokumen <ArrowRight className="w-4 h-4" />
+          Lanjut ke Dokumen <ArrowRight className="h-4 w-4" />
         </button>
       </div>
 
@@ -84,14 +85,15 @@ export function ArchitectureStep({
             (a, b) => TIER_ORDER.indexOf(a.tier) - TIER_ORDER.indexOf(b.tier)
           )
           const sel = selected[cat]
-          const isCustomSelected = !!sel && !opts.some((o) => o.name === sel.name)
+          const isCustomSelected =
+            !!sel && !opts.some((o) => o.name === sel.name)
           return (
             <div key={cat}>
-              <div className="flex items-center gap-2 mb-4">
-                <span className="w-1 h-5 bg-[#ff1f5a] rounded-sm" />
+              <div className="mb-4 flex items-center gap-2">
+                <span className="h-5 w-1 rounded-sm bg-[#ff1f5a]" />
                 <h3 className="text-xl font-bold">{CATEGORY_LABELS[cat]}</h3>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {sorted.map((opt) => {
                   const isSelected = selected[cat]?.name === opt.name
                   return (
@@ -99,25 +101,30 @@ export function ArchitectureStep({
                       key={opt.name + opt.tier}
                       onClick={() => onSelect(cat, opt)}
                       className={cn(
-                        "card-dark card-dark-hover relative p-5 text-left flex flex-col h-full",
+                        "card-dark card-dark-hover relative flex h-full flex-col p-5 text-left",
                         isSelected && "card-selected"
                       )}
                     >
                       <span
                         className={cn(
-                          "absolute -top-2.5 right-4 text-[10px] font-bold tracking-wider px-2.5 py-1 rounded-md",
+                          "absolute -top-2.5 right-4 rounded-md px-2.5 py-1 text-[10px] font-bold tracking-wider",
                           TIER_BADGE[opt.tier]
                         )}
                       >
                         {TIER_LABELS[opt.tier]}
                       </span>
                       {isSelected && (
-                        <span className="absolute top-3 left-3 w-5 h-5 rounded-full bg-[#ff1f5a] flex items-center justify-center">
-                          <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                        <span className="absolute top-3 left-3 flex h-5 w-5 items-center justify-center rounded-full bg-[#ff1f5a]">
+                          <Check
+                            className="h-3 w-3 text-white"
+                            strokeWidth={3}
+                          />
                         </span>
                       )}
-                      <h4 className="font-bold text-base mb-2 mt-2 pr-2">{opt.name}</h4>
-                      <p className="text-[13px] text-[#a0a0a0] leading-relaxed">
+                      <h4 className="mt-2 mb-2 pr-2 text-base font-bold">
+                        {opt.name}
+                      </h4>
+                      <p className="text-[13px] leading-relaxed text-[#a0a0a0]">
                         {opt.description}
                       </p>
                     </button>
@@ -127,20 +134,22 @@ export function ArchitectureStep({
                 {/* Custom input card */}
                 <div
                   className={cn(
-                    "card-dark relative p-5 flex flex-col h-full",
+                    "card-dark relative flex h-full flex-col p-5",
                     isCustomSelected && "card-selected"
                   )}
                 >
-                  <span className="absolute -top-2.5 right-4 text-[10px] font-bold tracking-wider px-2.5 py-1 rounded-md bg-[#ff1f5a] text-white">
+                  <span className="absolute -top-2.5 right-4 rounded-md bg-[#ff1f5a] px-2.5 py-1 text-[10px] font-bold tracking-wider text-white">
                     CUSTOM
                   </span>
                   {isCustomSelected && (
-                    <span className="absolute top-3 left-3 w-5 h-5 rounded-full bg-[#ff1f5a] flex items-center justify-center">
-                      <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                    <span className="absolute top-3 left-3 flex h-5 w-5 items-center justify-center rounded-full bg-[#ff1f5a]">
+                      <Check className="h-3 w-3 text-white" strokeWidth={3} />
                     </span>
                   )}
-                  <h4 className="font-bold text-base mb-2 mt-2 pr-2">Tech Stack Kustom</h4>
-                  <p className="text-[13px] text-[#a0a0a0] leading-relaxed mb-3">
+                  <h4 className="mt-2 mb-2 pr-2 text-base font-bold">
+                    Tech Stack Kustom
+                  </h4>
+                  <p className="mb-3 text-[13px] leading-relaxed text-[#a0a0a0]">
                     Punya pilihan sendiri? Ketik nama tech-nya di bawah.
                   </p>
                   <div className="mt-auto flex gap-2">
@@ -153,19 +162,19 @@ export function ArchitectureStep({
                         if (e.key === "Enter") applyCustom(cat)
                       }}
                       placeholder="cth: SvelteKit"
-                      className="flex-1 min-w-0 rounded-md bg-[#0f0f0f] border border-[#2a2a2a] px-3 py-2 text-sm outline-none focus:border-[#ff1f5a] transition-colors"
+                      className="min-w-0 flex-1 rounded-md border border-[#2a2a2a] bg-[#0f0f0f] px-3 py-2 text-sm transition-colors outline-none focus:border-[#ff1f5a]"
                     />
                     <button
                       onClick={() => applyCustom(cat)}
                       disabled={!custom[cat].trim()}
-                      className="btn-pink rounded-md px-3 py-2 font-semibold flex items-center justify-center shrink-0 disabled:opacity-50"
+                      className="btn-pink flex shrink-0 items-center justify-center rounded-md px-3 py-2 font-semibold disabled:opacity-50"
                       title="Gunakan tech stack kustom"
                     >
-                      <Plus className="w-4 h-4" />
+                      <Plus className="h-4 w-4" />
                     </button>
                   </div>
                   {isCustomSelected && sel && (
-                    <p className="mt-2 text-[12px] text-[#ff1f5a] font-medium truncate">
+                    <p className="mt-2 truncate text-[12px] font-medium text-[#ff1f5a]">
                       Dipilih: {sel.name}
                     </p>
                   )}

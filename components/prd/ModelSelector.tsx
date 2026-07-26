@@ -93,7 +93,9 @@ export function ModelSelector({
   // scroll active item into view
   useEffect(() => {
     if (!open) return
-    const el = listRef.current?.querySelector<HTMLElement>(`[data-idx="${activeIdx}"]`)
+    const el = listRef.current?.querySelector<HTMLElement>(
+      `[data-idx="${activeIdx}"]`
+    )
     el?.scrollIntoView({ block: "nearest" })
   }, [activeIdx, open])
 
@@ -121,28 +123,28 @@ export function ModelSelector({
         type="button"
         onClick={() => setOpen((o) => !o)}
         className={cn(
-          "w-full flex items-center gap-3 px-3.5 py-3 rounded-lg border bg-[#0a0a0a] text-left transition-all",
+          "flex w-full items-center gap-3 rounded-lg border bg-[#0a0a0a] px-3.5 py-3 text-left transition-all",
           "border-[#2a2a2a] hover:border-[#3a3a3a]",
           open && "border-[#ff1f5a] ring-1 ring-[#ff1f5a]/40"
         )}
       >
-        <div className="w-8 h-8 rounded-md bg-gradient-to-br from-[#ff1f5a]/20 to-[#ff1f5a]/5 border border-[#ff1f5a]/30 flex items-center justify-center shrink-0">
-          <Sparkles className="w-4 h-4 text-pink" />
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[#ff1f5a]/30 bg-gradient-to-br from-[#ff1f5a]/20 to-[#ff1f5a]/5">
+          <Sparkles className="text-pink h-4 w-4" />
         </div>
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           {selected ? (
             <>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold truncate">
+                <span className="truncate text-sm font-semibold">
                   {selected.name || selected.id}
                 </span>
                 {isFree(selected) && (
-                  <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 shrink-0">
+                  <span className="shrink-0 rounded border border-emerald-500/25 bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-bold tracking-wider text-emerald-400">
                     GRATIS
                   </span>
                 )}
               </div>
-              <div className="text-[11px] text-[#7a7a7a] font-mono truncate mt-0.5">
+              <div className="mt-0.5 truncate font-mono text-[11px] text-[#7a7a7a]">
                 {selected.id}
               </div>
             </>
@@ -154,18 +156,18 @@ export function ModelSelector({
         </div>
         <ChevronDown
           className={cn(
-            "w-4 h-4 text-[#7a7a7a] shrink-0 transition-transform",
-            open && "rotate-180 text-pink"
+            "h-4 w-4 shrink-0 text-[#7a7a7a] transition-transform",
+            open && "text-pink rotate-180"
           )}
         />
       </button>
 
       {/* Popover */}
       {open && (
-        <div className="absolute z-20 left-0 right-0 mt-2 rounded-lg border border-[#2a2a2a] bg-[#111111] shadow-2xl shadow-black/60 overflow-hidden">
+        <div className="absolute right-0 left-0 z-20 mt-2 overflow-hidden rounded-lg border border-[#2a2a2a] bg-[#111111] shadow-2xl shadow-black/60">
           {/* Search */}
-          <div className="flex items-center gap-2 px-3 py-2.5 border-b border-[#1f1f1f]">
-            <Search className="w-4 h-4 text-[#6a6a6a] shrink-0" />
+          <div className="flex items-center gap-2 border-b border-[#1f1f1f] px-3 py-2.5">
+            <Search className="h-4 w-4 shrink-0 text-[#6a6a6a]" />
             <input
               ref={inputRef}
               value={query}
@@ -174,7 +176,7 @@ export function ModelSelector({
               placeholder="Cari: gemini, gpt, claude, llama..."
               className="flex-1 bg-transparent text-sm outline-none placeholder:text-[#5a5a5a]"
             />
-            <span className="text-[10px] text-[#5a5a5a] font-mono shrink-0">
+            <span className="shrink-0 font-mono text-[10px] text-[#5a5a5a]">
               {filtered.length}
             </span>
           </div>
@@ -203,29 +205,29 @@ export function ModelSelector({
                       setOpen(false)
                     }}
                     className={cn(
-                      "w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors",
+                      "flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors",
                       isActive && "bg-[#1a1a1a]",
                       isSelected && "bg-[#ff1f5a]/8"
                     )}
                   >
-                    <div className="flex-1 min-w-0">
+                    <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <span
                           className={cn(
-                            "text-sm font-medium truncate",
+                            "truncate text-sm font-medium",
                             isSelected ? "text-white" : "text-[#d6d6d6]"
                           )}
                         >
                           {m.name || m.id}
                         </span>
                         {free && (
-                          <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 shrink-0">
+                          <span className="shrink-0 rounded border border-emerald-500/25 bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-bold tracking-wider text-emerald-400">
                             GRATIS
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 mt-0.5 text-[11px] text-[#7a7a7a]">
-                        <span className="font-mono truncate">{m.id}</span>
+                      <div className="mt-0.5 flex items-center gap-2 text-[11px] text-[#7a7a7a]">
+                        <span className="truncate font-mono">{m.id}</span>
                         {ctx && (
                           <>
                             <span className="text-[#3a3a3a]">·</span>
@@ -241,7 +243,10 @@ export function ModelSelector({
                       </div>
                     </div>
                     {isSelected && (
-                      <Check className="w-4 h-4 text-pink shrink-0" strokeWidth={3} />
+                      <Check
+                        className="text-pink h-4 w-4 shrink-0"
+                        strokeWidth={3}
+                      />
                     )}
                   </button>
                 )
@@ -250,7 +255,7 @@ export function ModelSelector({
           </div>
 
           {/* Footer */}
-          <div className="px-3 py-2 border-t border-[#1f1f1f] text-[10px] text-[#5a5a5a] font-mono flex items-center justify-between">
+          <div className="flex items-center justify-between border-t border-[#1f1f1f] px-3 py-2 font-mono text-[10px] text-[#5a5a5a]">
             <span>↑↓ navigasi · ↵ pilih · esc tutup</span>
             <span>{loading ? "memuat..." : `${options.length} model`}</span>
           </div>

@@ -4,7 +4,16 @@ import { Brain, Cog, Radio, Loader2 } from "lucide-react"
 
 type Variant = "concept" | "architecture" | "research" | "compile"
 
-const VARIANTS: Record<Variant, { Icon: typeof Brain; title: string; subtitle: string; spin?: boolean; pulse?: boolean }> = {
+const VARIANTS: Record<
+  Variant,
+  {
+    Icon: typeof Brain
+    title: string
+    subtitle: string
+    spin?: boolean
+    pulse?: boolean
+  }
+> = {
   concept: {
     Icon: Brain,
     title: "Menganalisis Konsep...",
@@ -31,22 +40,34 @@ const VARIANTS: Record<Variant, { Icon: typeof Brain; title: string; subtitle: s
   },
 }
 
-export function LoadingScreen({ variant, phaseLabel }: { variant: Variant; phaseLabel?: string }) {
+export function LoadingScreen({
+  variant,
+  phaseLabel,
+}: {
+  variant: Variant
+  phaseLabel?: string
+}) {
   const v = VARIANTS[variant]
   const Icon = v.Icon
-  const title = phaseLabel ? `${v.title.replace("...", "")} (${phaseLabel})...` : v.title
+  const title = phaseLabel
+    ? `${v.title.replace("...", "")} (${phaseLabel})...`
+    : v.title
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center min-h-[60vh] px-6">
+    <div className="flex min-h-[60vh] flex-1 flex-col items-center justify-center px-6">
       <div
         className={
           v.spin ? "animate-spin-slow" : v.pulse ? "animate-pulse-pink" : ""
         }
       >
-        <Icon className="w-14 h-14 text-pink" strokeWidth={2.5} />
+        <Icon className="text-pink h-14 w-14" strokeWidth={2.5} />
       </div>
-      <h2 className="mt-6 text-2xl sm:text-3xl font-bold text-center">{title}</h2>
-      <p className="mt-2 text-sm text-[#8a8a8a] font-mono text-center">{v.subtitle}</p>
+      <h2 className="mt-6 text-center text-2xl font-bold sm:text-3xl">
+        {title}
+      </h2>
+      <p className="mt-2 text-center font-mono text-sm text-[#8a8a8a]">
+        {v.subtitle}
+      </p>
     </div>
   )
 }

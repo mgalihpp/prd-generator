@@ -46,8 +46,12 @@ export async function POST(req: Request) {
     const normalized: ConceptResult = {
       elevatorPitch: String(result.elevatorPitch ?? ""),
       targetUser: String(result.targetUser ?? ""),
-      keyProblems: Array.isArray(result.keyProblems) ? result.keyProblems.map(String) : [],
-      useCases: Array.isArray(result.useCases) ? result.useCases.map(String) : [],
+      keyProblems: Array.isArray(result.keyProblems)
+        ? result.keyProblems.map(String)
+        : [],
+      useCases: Array.isArray(result.useCases)
+        ? result.useCases.map(String)
+        : [],
     }
 
     return NextResponse.json(normalized)

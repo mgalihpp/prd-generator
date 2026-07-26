@@ -43,7 +43,10 @@ export default function Page() {
   const [revising, setRevising] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const [config, setConfig] = useState<ApiKeyConfig>({ apiKey: "", model: DEFAULT_MODELS[0] })
+  const [config, setConfig] = useState<ApiKeyConfig>({
+    apiKey: "",
+    model: DEFAULT_MODELS[0],
+  })
   const [apiKeyOpen, setApiKeyOpen] = useState(false)
   const [hydrated, setHydrated] = useState(false)
   const abortRef = useRef<AbortController | null>(null)
@@ -201,13 +204,18 @@ export default function Page() {
 
   const activeStep = STEP_KEY[step]
   const completed: Record<StepKey, boolean> = {
-    concept: ["arch-loading", "arch-result", "doc-loading", "doc-result"].includes(step),
+    concept: [
+      "arch-loading",
+      "arch-result",
+      "doc-loading",
+      "doc-result",
+    ].includes(step),
     architecture: ["doc-loading", "doc-result"].includes(step),
     document: step === "doc-result" && !streaming && !!markdown,
   }
 
   return (
-    <div className="min-h-svh flex flex-col">
+    <div className="flex min-h-svh flex-col">
       <Header
         active={activeStep}
         completed={completed}
@@ -216,12 +224,12 @@ export default function Page() {
       />
 
       {error && (
-        <div className="bg-red-950/40 border-y border-red-900 text-red-200 px-6 py-3 text-sm">
+        <div className="border-y border-red-900 bg-red-950/40 px-6 py-3 text-sm text-red-200">
           <strong>Error:</strong> {error}
         </div>
       )}
 
-      <main className="flex-1 flex flex-col">
+      <main className="flex flex-1 flex-col">
         {step === "concept-input" && (
           <ConceptStep initial={concept} onAnalyze={handleAnalyze} />
         )}

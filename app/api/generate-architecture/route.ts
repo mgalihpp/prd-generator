@@ -26,7 +26,8 @@ Setiap "description" 2-3 kalimat dalam Bahasa Indonesia yang menjelaskan kelebih
 export async function POST(req: Request) {
   try {
     const { concept, conceptResult, apiKey, model } = await req.json()
-    if (!apiKey) return NextResponse.json({ error: "API key required" }, { status: 400 })
+    if (!apiKey)
+      return NextResponse.json({ error: "API key required" }, { status: 400 })
 
     const userPrompt = `Konsep produk:\n"""\n${concept}\n"""\n\nAnalisis konsep:\n${JSON.stringify(conceptResult, null, 2)}\n\nHasilkan rekomendasi arsitektur JSON sesuai skema.`
 
@@ -39,7 +40,12 @@ export async function POST(req: Request) {
       ],
     })
 
-    const cats: (keyof ArchitectureResult)[] = ["frontend", "backend", "database", "deployment"]
+    const cats: (keyof ArchitectureResult)[] = [
+      "frontend",
+      "backend",
+      "database",
+      "deployment",
+    ]
     const validTiers = new Set(["hemat", "standard", "populer", "pro"])
     const normalized: ArchitectureResult = {
       frontend: [],
